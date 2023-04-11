@@ -1,0 +1,75 @@
+//Ребята решили поиграть в баскетбол, для чего им необходимо поделиться на 2 команды (количество детей четное). Делиться решили с помощью считалки, состоящей из K слов.
+//Игрок, на которого выпало слово с номером K, отправляется в команду №1. Далее считалка продолжается со следующего по порядку игрока. 
+//Считалка продолжается до тех пор, пока в кругу не останется ровно половина детей. Они все попадают в команду №2. Выведите список учеников из команды №1 и команды №2. 
+//Исходные данные считываются из текстового файла. Например:
+//Петя Вася Коля Дима Матвей Иван
+//K = 4
+//Команда 1: Петя Вася Дима
+//Команда 2: Коля Матвей Иван
+//Порядок имен в команде – произвольный. Запрещено использовать библиотеку STL!
+
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace std;
+
+int main() {
+    ifstream input("input.txt");
+    ofstream output("output.txt");
+    int k;
+    input >> k;
+    int n = 0;
+    string name;
+    while (input >> name) {
+        n++;
+    }
+    input.close();
+    input.open("input.txt");
+    string* arr = new string[n];
+    for (int i = 0; i < n; i++) {
+        input >> arr[i];
+    }
+    bool* used = new bool[n];
+    memset(used, 0, n);
+    int curr = k - 1;
+    while (n > 1) {
+        used[curr] = true;
+        n--;
+        if (n % 2 == 0) {
+            output << "Команда 1: ";
+        }
+        else {
+            output << "Команда 2: ";
+        }
+        for (int i = 0; i < curr; i++) {
+            if (!used[i]) {
+                output << arr[i] << " ";
+            }
+        }
+        output << endl;
+        int next = (curr + k) % n;
+        while (used[next]) {
+            next = (next + 1) % n;
+        }
+        curr = next;
+    }
+    output << "Команда 1: ";
+    for (int i = 0; i < n; i++) {
+        if (!used[i]) {
+            output << arr[i] << " ";
+        }
+    }
+    output << endl;
+    output << "Команда 2: ";
+    for (int i = 0; i < n; i++) {
+        if (used[i]) {
+            output << arr[i] << " ";
+        }
+    }
+    output.close();
+    input.close();
+    delete[] arr;
+    delete[] used;
+    return 0;
+}
